@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { JwtAuthGuard } from "@modules/auth/guards/jwt-auth.guard";
 import { CreateTransactionDto } from "@modules/wallet/dtos/create-transaction.dto";
 import { WalletService } from "@modules/wallet/wallet.service";
