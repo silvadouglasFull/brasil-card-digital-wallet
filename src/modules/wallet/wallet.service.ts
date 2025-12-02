@@ -1,9 +1,9 @@
 import {
-    CreateTransactionDto,
-    TransactionType,
+  CreateTransactionDto,
+  TransactionType,
 } from "@modules/wallet/dtos/create-transaction.dto";
+import { DepositStrategy } from "@modules/wallet/strategies/deposit.strategy";
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { DepositStrategy } from "./strategies/deposit.strategy";
 @Injectable()
 export class WalletService {
   constructor(private depositStrategy: DepositStrategy) {}
