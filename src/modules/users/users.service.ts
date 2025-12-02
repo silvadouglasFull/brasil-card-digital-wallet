@@ -1,4 +1,5 @@
-import { accounts } from "@/modules/wallet/entities";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { accounts } from "@modules/wallet/entities";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { drizzle } from "drizzle-orm/node-postgres";
