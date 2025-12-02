@@ -18,8 +18,10 @@ export const accounts = pgTable("accounts", {
 export const transactions = pgTable("transactions", {
   ...baseSchema,
   amount: decimal("amount", { precision: 15, scale: 2 }).notNull(),
-  type: text({ enum: [...transactionTypeEnum] }),
-  status: text({ enum: [...transactionStatusEnum] })
+  type: text("type", { enum: transactionTypeEnum as [string, ...string[]] }),
+  status: text("status", {
+    enum: transactionStatusEnum as [string, ...string[]],
+  })
     .default("PROCESSING")
     .notNull(),
   fromAccountId: uuid("from_account_id").references(() => accounts.id),
