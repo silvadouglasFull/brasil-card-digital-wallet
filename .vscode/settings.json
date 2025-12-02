@@ -3,6 +3,8 @@
 // Retrieved 2025-12-02, License - CC BY-SA 4.0
 
 {
-  "editor.codeActionsOnSave": { "source.fixAll": true },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
   "editor.formatOnSave": false
 }

@@ -1,9 +1,9 @@
+import { users } from "@modules/users/entities";
 import type {
   IUserRepository,
   NewUser,
   User,
-} from "@/modules/users/repositories/user.repository.interface";
-import { users } from "@modules/users/entities";
+} from "@modules/users/repositories/user.repository.interface";
 import { Inject, Injectable } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres"; // Ou sua config de provider

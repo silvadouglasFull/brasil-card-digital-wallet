@@ -21,7 +21,7 @@ export class AuthController {
       throw new UnauthorizedException("Credenciais inválidas");
     }
 
-    const { access_token } = await this.authService.login(user);
+    const { access_token } = this.authService.login(user);
 
     res.cookie("access_token", access_token, {
       httpOnly: true,

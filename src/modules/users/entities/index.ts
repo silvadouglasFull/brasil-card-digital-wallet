@@ -1,4 +1,4 @@
-import { baseSchema } from "@/core/database/schema-utils";
+import { baseSchema } from "@core/database/schema-utils";
 import { boolean, pgTable, varchar } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {

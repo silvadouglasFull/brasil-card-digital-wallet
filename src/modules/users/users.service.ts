@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { CreateUserDto } from "@modules/users/dtos/create-user.dto";
+import { users } from "@modules/users/entities";
+import { DB_CONNECTION } from "@modules/users/repositories/user.repository";
+import {
+  IUserRepository,
+  User,
+} from "@modules/users/repositories/user.repository.interface";
 import { accounts } from "@modules/wallet/entities";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { CreateUserDto } from "./dtos/create-user.dto";
-import { users } from "./entities";
-import { DB_CONNECTION } from "./repositories/user.repository";
-import {
-  IUserRepository,
-  User,
-} from "./repositories/user.repository.interface";
 
 @Injectable()
 export class UsersService {

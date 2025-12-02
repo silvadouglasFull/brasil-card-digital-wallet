@@ -1,4 +1,4 @@
-import { users } from "@/modules/users/entities";
+import { users } from "@modules/users/entities";
 
 export type NewUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
