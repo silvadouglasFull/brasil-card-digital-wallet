@@ -20,4 +20,12 @@ export class AccountRepository implements IAccountRepository {
       .limit(1);
     return result;
   }
+  async findFirstByAccountId(accountId: string): Promise<Account | undefined> {
+    const [result] = await this.db
+      .select()
+      .from(accounts)
+      .where(eq(accounts.id, accountId))
+      .limit(1);
+    return result;
+  }
 }

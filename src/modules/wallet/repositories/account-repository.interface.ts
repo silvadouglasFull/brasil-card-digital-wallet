@@ -3,4 +3,5 @@ export type NewAccount = typeof accounts.$inferInsert;
 export type Account = typeof accounts.$inferSelect;
 export type IAccountRepository = {
   findByUserId(userId: string): Promise<Account | undefined>;
+  findFirstByAccountId(accountId: string): Promise<Account | undefined>;
 };

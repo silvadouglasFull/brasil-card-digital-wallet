@@ -27,4 +27,53 @@ export class TransactionAuditListener {
       console.log(`[AUDITORIA] Transação ${payload.transactionId} APROVADA.`);
     }
   }
+  public async processTransfer(payload: PayloadDto) {
+    await this.db.transaction(async (tx) => {
+      const debitResult = await tx.execute(
+        sql`UPDATE accounts 
+            SET balance = balance - ${payload.amount} 
+            WHERE id = ${payload.accountId} 
+            AND balance >= ${payload.amount}`,
+      );
+
+      if (debitResult.rowCount === 0) {
+        throw new Error("Saldo insuficiente no momento da execução.");
+      }
+
+      await tx.execute(
+        sql`UPDATE accounts 
+            SET balance = balance + ${payload.amount} 
+            WHERE id = ${payload.toAccountId}`,
+      );
+
+      await tx
+        .update(transactions)
+        .set({ status: "COMPLETED", updatedAt: new Date() })
+        .where(eq(transactions.id, payload.transactionId));
+    });
+
+    console.log(
+      `[AUDITORIA] Transferência ${payload.transactionId} CONCLUÍDA.`,
+    );
+  }
+  public async processDeposit(payload: PayloadDto) {
+    await this.db.transaction(async (tx) => {
+      await tx
+        .update(transactions)
+        .set({ status: "COMPLETED", updatedAt: new Date() })
+        .where(eq(transactions.id, payload.transactionId));
+
+      await tx.execute(
+        sql`UPDATE accounts SET balance = balance + ${payload.amount} WHERE id = ${payload.accountId}`,
+      );
+    });
+    console.log(`[AUDITORIA] Depósito ${payload.transactionId} APROVADO.`);
+  }
+
+  public async markAsFailed(transactionId: string, reason: string) {
+    await this.db
+      .update(transactions)
+      .set({ status: "FAILED", description: `Falha: ${reason}` })
+      .where(eq(transactions.id, transactionId));
+  }
 }

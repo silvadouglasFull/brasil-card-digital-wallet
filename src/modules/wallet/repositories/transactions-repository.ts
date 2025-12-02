@@ -16,15 +16,20 @@ export class TransactionRepository implements ITransactionRepository {
   async create(
     transactionData: Pick<
       NewTransaction,
-      "amount" | "toAccountId" | "fromAccountId" | "description"
+      | "amount"
+      | "toAccountId"
+      | "fromAccountId"
+      | "description"
+      | "type"
+      | "status"
     >,
   ): Promise<TranewTransaction | undefined> {
     const [newTransaction] = await this.db
       .insert(transactions)
       .values({
         amount: transactionData.amount.toString(),
-        type: this.defaultType,
-        status: this.defaultStatus,
+        type: transactionData.type || this.defaultType,
+        status: transactionData.status || this.defaultStatus,
         toAccountId: transactionData.toAccountId,
         fromAccountId: null,
         description: "Depósito via API",

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class PayloadDto {
   @IsString()
@@ -13,4 +13,8 @@ export class PayloadDto {
   @IsString()
   @IsNotEmpty()
   type: "DEPOSIT" | "TRANSFER" | "REVERSAL";
+
+  @IsString()
+  @IsOptional()
+  toAccountId?: string;
 }
