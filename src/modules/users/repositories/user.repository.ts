@@ -3,10 +3,10 @@ import type {
   NewUser,
   User,
 } from "@/modules/users/repositories/user.repository.interface";
+import { users } from "@modules/users/entities";
 import { Inject, Injectable } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres"; // Ou sua config de provider
-import { users } from "../entities";
 
 // Nota: Em um setup real NestJS, injetaríamos o DB Provider.
 // Aqui simplificamos assumindo uma conexão disponível ou injetada.
@@ -22,16 +22,23 @@ export class UserRepository implements IUserRepository {
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    const result = await this.db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
+    const [result] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
     return result;
   }
 
   async findById(id: string): Promise<User | undefined> {
-    const result = await this.db.query.users.findFirst({
-      where: eq(users.id, id),
-    });
+    const [result] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1);
     return result;
+  }
+  async delete(id: string): Promise<void> {
+    await this.db.delete(users).where(eq(users.id, id));
   }
 }
