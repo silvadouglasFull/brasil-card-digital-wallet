@@ -6,10 +6,8 @@ import type {
 } from "@modules/users/repositories/user.repository.interface";
 import { Inject, Injectable } from "@nestjs/common";
 import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/node-postgres"; // Ou sua config de provider
+import { drizzle } from "drizzle-orm/node-postgres";
 
-// Nota: Em um setup real NestJS, injetaríamos o DB Provider.
-// Aqui simplificamos assumindo uma conexão disponível ou injetada.
 export const DB_CONNECTION = "DB_CONNECTION";
 
 @Injectable()
