@@ -9,14 +9,14 @@ export class DepositStrategy implements ITransactionStrategy {
   private defaultStatus: string = "PROCESSING";
   private defaultType: string = "DEPOSIT";
   constructor(
-    @Inject("IAccountRepository") private repository: IAccountRepository,
+    @Inject("IAccountRepository") private accountRepository: IAccountRepository,
     @Inject("ITransactionRepository")
     private transactionRepository: ITransactionRepository,
     private eventEmitter: EventEmitter2,
   ) {}
 
   async handle(dto: CreateTransactionDto, userId: string) {
-    const account = await this.repository.findByUserId(userId);
+    const account = await this.accountRepository.findByUserId(userId);
     if (!account) throw new Error("Account not found");
     const newTransaction = await this.transactionRepository.create({
       amount: dto.amount.toString(),

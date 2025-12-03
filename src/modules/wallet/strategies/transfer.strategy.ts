@@ -10,7 +10,7 @@ export class TransferStrategy implements ITransactionStrategy {
   private defaultStatus: string = "PROCESSING";
   private defaultType: string = "TRANSFER";
   constructor(
-    @Inject("IAccountRepository") private repository: IAccountRepository,
+    @Inject("IAccountRepository") private accountRepository: IAccountRepository,
     @Inject("ITransactionRepository")
     private transactionRepository: ITransactionRepository,
     private eventEmitter: EventEmitter2,
@@ -22,7 +22,7 @@ export class TransferStrategy implements ITransactionStrategy {
         "Conta de destino é obrigatória para transferências.",
       );
     }
-    const sourceAccount = await this.repository.findByUserId(userId);
+    const sourceAccount = await this.accountRepository.findByUserId(userId);
 
     if (!sourceAccount)
       throw new BadRequestException("Conta de origem não encontrada.");
@@ -32,7 +32,7 @@ export class TransferStrategy implements ITransactionStrategy {
         "Saldo insuficiente para realizar a transferência.",
       );
     }
-    const targetAccount = await this.repository.findFirstByAccountId(
+    const targetAccount = await this.accountRepository.findFirstByAccountId(
       dto.toAccountId,
     );
 
