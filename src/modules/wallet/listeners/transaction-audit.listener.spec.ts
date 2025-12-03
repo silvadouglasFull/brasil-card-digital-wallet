@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 import { DB_CONNECTION } from "@/core/database/database.module";
+import { PayloadDto } from "@modules/wallet/listeners/dto/payload.dto";
+import { TransactionAuditListener } from "@modules/wallet/listeners/transaction-audit.listener";
 import { Test, TestingModule } from "@nestjs/testing";
-import { PayloadDto } from "./dto/payload.dto";
-import { TransactionAuditListener } from "./transaction-audit.listener";
 
 const mockTx = {
   update: jest.fn().mockReturnThis(),
@@ -70,5 +70,40 @@ describe("TransactionAuditListener", () => {
     jest.advanceTimersByTime(2000);
     await promise;
     expect(mockDb.transaction).not.toHaveBeenCalled();
+  });
+  it("It must process reversals and allow negative balances.", async () => {
+    const payload: PayloadDto = {
+      transactionId: "tx_rev_1",
+      amount: "500.00",
+      accountId: "acc_poor",
+      toAccountId: "acc_rich",
+      type: "REVERSAL",
+    };
+    const promise = listener.handleTransactionCreatedEvent(payload);
+    jest.advanceTimersByTime(2000);
+    await promise;
+    expect(mockDb.transaction).toHaveBeenCalled();
+    expect(mockTx.execute).toHaveBeenCalledTimes(2);
+    expect(mockTx.set).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "COMPLETED" }),
+    );
+  });
+
+  it("It must process reversals and allow negative balances.", async () => {
+    const payload: PayloadDto = {
+      transactionId: "tx_rev_1",
+      amount: "500.00",
+      accountId: "acc_poor",
+      toAccountId: "acc_rich",
+      type: "REVERSAL",
+    };
+    const promise = listener.handleTransactionCreatedEvent(payload);
+    jest.advanceTimersByTime(2000);
+    await promise;
+    expect(mockDb.transaction).toHaveBeenCalled();
+    expect(mockTx.execute).toHaveBeenCalledTimes(2);
+    expect(mockTx.set).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "COMPLETED" }),
+    );
   });
 });

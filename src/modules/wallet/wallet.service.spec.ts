@@ -8,6 +8,7 @@ import { TransferStrategy } from "@modules/wallet/strategies/transfer.strategy";
 import { WalletService } from "@modules/wallet/wallet.service";
 import { BadRequestException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
+import { ReversalStrategy } from "./strategies/reversal.strategy";
 
 describe("WalletService", () => {
   let service: WalletService;
@@ -18,6 +19,10 @@ describe("WalletService", () => {
   const mockTransferStrategy = {
     handle: jest.fn(),
   };
+  const mockReversalStrategy = {
+    handle: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -29,6 +34,10 @@ describe("WalletService", () => {
         {
           provide: TransferStrategy,
           useValue: mockTransferStrategy,
+        },
+        {
+          provide: ReversalStrategy,
+          useValue: mockReversalStrategy,
         },
       ],
     }).compile();

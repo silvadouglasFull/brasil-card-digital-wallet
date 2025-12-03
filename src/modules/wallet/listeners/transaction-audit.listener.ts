@@ -25,6 +25,8 @@ export class TransactionAuditListener {
         );
       });
       console.log(`[AUDITORIA] Transação ${payload.transactionId} APROVADA.`);
+    } else if (payload.type === "REVERSAL") {
+      await this.processReversal(payload);
     }
   }
   public async processTransfer(payload: PayloadDto) {
@@ -69,7 +71,39 @@ export class TransactionAuditListener {
     });
     console.log(`[AUDITORIA] Depósito ${payload.transactionId} APROVADO.`);
   }
+  // Adicione este método dentro da classe TransactionAuditListener
+  // E atualize o método handleTransactionCreatedEvent para chamar este método no 'else if'
 
+  // No método principal handleTransactionCreatedEvent:
+  // ...
+  // else if (payload.type === 'REVERSAL') {
+  //   await this.processReversal(payload);
+  // }
+
+  public async processReversal(payload: PayloadDto) {
+    await this.db.transaction(async (tx) => {
+      await tx.execute(
+        sql`UPDATE accounts 
+            SET balance = balance - ${payload.amount} 
+            WHERE id = ${payload.accountId}`,
+      );
+
+      await tx.execute(
+        sql`UPDATE accounts 
+            SET balance = balance + ${payload.amount} 
+            WHERE id = ${payload.toAccountId}`,
+      );
+
+      await tx
+        .update(transactions)
+        .set({ status: "COMPLETED", updatedAt: new Date() })
+        .where(eq(transactions.id, payload.transactionId));
+    });
+
+    console.log(
+      `[AUDITORIA] Reversão ${payload.transactionId} EXECUTADA (Saldo ajustado).`,
+    );
+  }
   public async markAsFailed(transactionId: string, reason: string) {
     await this.db
       .update(transactions)
