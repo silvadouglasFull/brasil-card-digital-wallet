@@ -1,98 +1,181 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# BrasilCard Digital Wallet API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 📖 Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This is a robust RESTful API developed for a digital financial wallet system. Ideally designed for the **BrasilCard** financial institution, this application allows users to register, authenticate, and manage their finances in real-time.
 
-## Description
+The project was built using **Nest.js**, focusing on scalability, security, and maintainability. It implements advanced software engineering concepts such as:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+* **Event-Driven Architecture (EDA):** Asynchronous processing for auditing and balance updates using `EventEmitter2`.
+* **Modular Monolith:** Clean separation of concerns (Auth, Users, Wallet).
+* **Design Patterns:** Repository Pattern for data access and Strategy Pattern for transaction processing (Deposit, Transfer, Reversal).
+* **Solid Principles & Clean Code:** Ensuring high code quality and testability.
+* **Security:** JWT Authentication via HttpOnly Cookies and Bcrypt hashing.
 
-## Project setup
+## 🛠 Tech Stack
+
+* **Framework:** Nest.js (Node.js)
+* **Language:** TypeScript
+* **Database:** PostgreSQL
+* **ORM:** Drizzle ORM
+* **Containerization:** Docker & Docker Compose
+* **Documentation:** Swagger / OpenAPI
+* **Testing:** Jest
+
+---
+
+## 🚀 Getting Started
+
+Follow these steps to set up the project in your local development environment.
+
+### 1. Clone the Repository
+```bash
+git clone git@github-dsweb:silvadouglasFull/brasil-card-digital-wallet.git
+cd brasil-card-digital-wallet
+````
+
+### 2\. Install Dependencies
+
+Ensure you have Node.js installed.
 
 ```bash
-$ npm install
+npm install
 ```
 
-## Compile and run the project
+### 3\. Environment Configuration
+
+Create a `.env` file in the root directory based on the provided example.
+
+**`.env` file content:**
+
+```env
+DB_USER=brasiluser
+DB_PASS=Lf64uzy2DK
+DB_NAME=brasilcard
+DB_PORT=5432
+DATABASE_URL="postgres://brasiluser:Lf64uzy2DK@localhost:5432/brasilcard"
+PORT=3000
+JWT_SECRET=f0PYo5YEqeom3i3XOv8SADNEGmhqkIFpqwlTHhJTQHjdOkN+SPmvG4xsDc5REkvL
+```
+
+### 4\. Run Docker (Database)
+
+Start the PostgreSQL container using Docker Compose.
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker-compose up -d
 ```
 
-## Run tests
+*Wait a few seconds for the database to initialize.*
+
+### 5\. Run Database Migrations
+
+Generate and push the database schema using Drizzle Kit.
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npx drizzle-kit push:pg
 ```
 
-## Deployment
+### 6\. Start the Application
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Run the API in development mode.
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The server will start at `http://localhost:3000`.
 
-## Resources
+-----
 
-Check out a few resources that may come in handy when working with NestJS:
+## 📚 API Documentation
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+The API includes auto-generated Swagger documentation. Once the server is running, visit:
 
-## Support
+👉 **[http://localhost:3000/api/docs](https://www.google.com/search?q=http://localhost:3000/api/docs)**
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Key Routes Summary
 
-## Stay in touch
+| Module | Method | Endpoint | Description |
+| :--- | :--- | :--- | :--- |
+| **Auth** | `POST` | `/auth/login` | Authenticates user and sets HttpOnly Cookie. |
+| **Users** | `POST` | `/users` | Registers a new user (creates account auto). |
+| **Wallet** | `POST` | `/wallet/transaction` | Creates a transaction (Deposit/Transfer/Reversal). |
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+-----
 
-## License
+## 💻 Consuming the API (JavaScript Fetch Examples)
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Below are examples of how to consume the API using the native browser `fetch` API.
+
+### 1\. User Login
+
+Since the API uses **HttpOnly Cookies** for security, you must set `credentials: 'include'` so the browser automatically handles the cookie storage for subsequent requests.
+
+```javascript
+const loginData = {
+  email: "user@example.com",
+  password: "securepassword123"
+};
+
+fetch("http://localhost:3000/auth/login", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(loginData),
+  credentials: "include" // Important: Allows receiving the Set-Cookie header
+})
+.then(response => response.json())
+.then(data => console.log("Login Success:", data))
+.catch(error => console.error("Error:", error));
+```
+
+### 2\. Creating a Transaction (Deposit/Transfer)
+
+Once logged in, the browser will automatically send the Cookie with the JWT token.
+
+```javascript
+const transactionData = {
+  amount: 150.00,
+  type: "TRANSFER", // Options: DEPOSIT, TRANSFER, REVERSAL
+  toAccountId: "target-account-uuid-here" // Required for Transfer/Reversal
+};
+
+fetch("http://localhost:3000/wallet/transaction", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(transactionData),
+  credentials: "include" // Important: Sends the HttpOnly Cookie with the request
+})
+.then(response => response.json())
+.then(data => {
+  console.log("Transaction Status:", data.status);
+  console.log("Message:", data.message);
+})
+.catch(error => console.error("Error:", error));
+```
+
+-----
+
+## 🧪 Running Tests
+
+The application includes unit tests, specifically for the critical business logic (Strategies and Listeners).
+
+```bash
+# Run unit tests
+npm run test
+
+# Run tests with coverage
+npm run test:cov
+```
+
+## 🏗 Architecture Highlights
+
+  * **Transactional Integrity:** Financial operations use database transactions to ensure atomicity.
+  * **Race Condition Safety:** Transfers use atomic SQL updates (`balance = balance - amount`) with conditional logic to prevent negative balances during concurrent requests.
+  * **Asynchronous Auditing:** Transactions are created in a `PROCESSING` state. An event listener processes the balance update in the background, simulating a real-world auditing queue.
+
+<!-- end list -->
