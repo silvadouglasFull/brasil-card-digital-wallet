@@ -11,6 +11,7 @@ The project was built using **Nest.js**, focusing on scalability, security, and 
 * **Design Patterns:** Repository Pattern for data access and Strategy Pattern for transaction processing (Deposit, Transfer, Reversal).
 * **Solid Principles & Clean Code:** Ensuring high code quality and testability.
 * **Security:** JWT Authentication via HttpOnly Cookies and Bcrypt hashing.
+* **CORS Support:** Configured to allow secure cross-origin requests from frontend applications.
 
 ## 🛠 Tech Stack
 
@@ -100,6 +101,8 @@ The API includes auto-generated Swagger documentation. Once the server is runnin
 | :--- | :--- | :--- | :--- |
 | **Auth** | `POST` | `/auth/login` | Authenticates user and sets HttpOnly Cookie. |
 | **Users** | `POST` | `/users` | Registers a new user (creates account auto). |
+| **Wallet** | `GET` | `/wallet/balance` | **[NEW]** Retrieves current user balance and account info. |
+| **Wallet** | `GET` | `/wallet/statement` | **[NEW]** Retrieves transaction history (statement). |
 | **Wallet** | `POST` | `/wallet/transaction` | Creates a transaction (Deposit/Transfer/Reversal). |
 
 -----
@@ -108,9 +111,9 @@ The API includes auto-generated Swagger documentation. Once the server is runnin
 
 Below are examples of how to consume the API using the native browser `fetch` API.
 
-### 1\. User Login
+**Note:** The API relies on **HttpOnly Cookies**. You must always set `credentials: 'include'` in your requests.
 
-Since the API uses **HttpOnly Cookies** for security, you must set `credentials: 'include'` so the browser automatically handles the cookie storage for subsequent requests.
+### 1\. User Login
 
 ```javascript
 const loginData = {
@@ -120,42 +123,53 @@ const loginData = {
 
 fetch("http://localhost:3000/auth/login", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify(loginData),
-  credentials: "include" // Important: Allows receiving the Set-Cookie header
+  credentials: "include" // Important: Receives the Set-Cookie header
 })
 .then(response => response.json())
-.then(data => console.log("Login Success:", data))
-.catch(error => console.error("Error:", error));
+.then(data => console.log("Login Success:", data));
 ```
 
-### 2\. Creating a Transaction (Deposit/Transfer)
+### 2\. Get Balance (Dashboard)
 
-Once logged in, the browser will automatically send the Cookie with the JWT token.
+```javascript
+fetch("http://localhost:3000/wallet/balance", {
+  method: "GET",
+  credentials: "include" // Important: Sends the Auth Cookie
+})
+.then(response => response.json())
+.then(data => console.log("Current Balance:", data.balance));
+```
+
+### 3\. Get Statement (History)
+
+```javascript
+fetch("http://localhost:3000/wallet/statement", {
+  method: "GET",
+  credentials: "include"
+})
+.then(response => response.json())
+.then(history => console.table(history));
+```
+
+### 4\. Create Transaction
 
 ```javascript
 const transactionData = {
   amount: 150.00,
-  type: "TRANSFER", // Options: DEPOSIT, TRANSFER, REVERSAL
-  toAccountId: "target-account-uuid-here" // Required for Transfer/Reversal
+  type: "TRANSFER", // DEPOSIT | TRANSFER | REVERSAL
+  toAccountId: "target-account-uuid-here" // Required for Transfer
 };
 
 fetch("http://localhost:3000/wallet/transaction", {
   method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify(transactionData),
-  credentials: "include" // Important: Sends the HttpOnly Cookie with the request
+  credentials: "include"
 })
 .then(response => response.json())
-.then(data => {
-  console.log("Transaction Status:", data.status);
-  console.log("Message:", data.message);
-})
-.catch(error => console.error("Error:", error));
+.then(data => console.log("Status:", data.status));
 ```
 
 -----
