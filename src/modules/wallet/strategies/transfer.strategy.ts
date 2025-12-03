@@ -13,6 +13,7 @@ export class TransferStrategy implements ITransactionStrategy {
     @Inject("IAccountRepository") private accountRepository: IAccountRepository,
     @Inject("ITransactionRepository")
     private transactionRepository: ITransactionRepository,
+    @Inject("EventEmitter2")
     private eventEmitter: EventEmitter2,
   ) {}
 

@@ -5,6 +5,7 @@ import type {
   TranewTransaction,
 } from "@modules/wallet/repositories/transactions-repository.interface";
 import { Inject, Injectable } from "@nestjs/common";
+import { desc, eq, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 export const DB_CONNECTION = "DB_CONNECTION";
 
@@ -36,5 +37,21 @@ export class TransactionRepository implements ITransactionRepository {
       })
       .returning();
     return newTransaction;
+  }
+  public async findMany(
+    accountId: string,
+  ): Promise<TranewTransaction[] | undefined> {
+    const result = await this.db
+      .select()
+      .from(transactions)
+      .where(
+        or(
+          eq(transactions.fromAccountId, accountId),
+          eq(transactions.toAccountId, accountId),
+        ),
+      )
+      .orderBy(desc(transactions.createdAt))
+      .limit(20);
+    return result;
   }
 }

@@ -1,9 +1,9 @@
 import { CreateTransactionDto } from "@modules/wallet/dtos/create-transaction.dto";
+import { IAccountRepository } from "@modules/wallet/repositories/account-repository.interface";
+import { ITransactionRepository } from "@modules/wallet/repositories/transactions-repository.interface";
 import { ITransactionStrategy } from "@modules/wallet/strategies/transaction.strategy.interface";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { IAccountRepository } from "../repositories/account-repository.interface";
-import { ITransactionRepository } from "../repositories/transactions-repository.interface";
 
 @Injectable()
 export class ReversalStrategy implements ITransactionStrategy {
@@ -13,6 +13,7 @@ export class ReversalStrategy implements ITransactionStrategy {
     @Inject("IAccountRepository") private accountRepository: IAccountRepository,
     @Inject("ITransactionRepository")
     private transactionRepository: ITransactionRepository,
+    @Inject("EventEmitter2")
     private eventEmitter: EventEmitter2,
   ) {}
 
