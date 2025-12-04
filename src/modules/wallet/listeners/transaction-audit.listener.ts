@@ -74,15 +74,6 @@ export class TransactionAuditListener {
     });
     console.log(`[AUDITORIA] Depósito ${payload.transactionId} APROVADO.`);
   }
-  // Adicione este método dentro da classe TransactionAuditListener
-  // E atualize o método handleTransactionCreatedEvent para chamar este método no 'else if'
-
-  // No método principal handleTransactionCreatedEvent:
-  // ...
-  // else if (payload.type === 'REVERSAL') {
-  //   await this.processReversal(payload);
-  // }
-
   public async processReversal(payload: PayloadDto) {
     await this.db.transaction(async (tx) => {
       await tx.execute(
