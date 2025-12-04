@@ -4,7 +4,6 @@ import {
 } from "@modules/wallet/dtos/create-transaction.dto";
 import { TransferStrategy } from "@modules/wallet/strategies/transfer.strategy";
 import { BadRequestException } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 
 const mockAccountRepository = {
@@ -27,12 +26,15 @@ describe("TransferStrategy", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TransferStrategy,
-        { provide: "IAccountRepository", useValue: mockAccountRepository },
+        {
+          provide: "IAccountRepository",
+          useValue: mockAccountRepository,
+        },
         {
           provide: "ITransactionRepository",
           useValue: mockTransactionRepository,
         },
-        { provide: EventEmitter2, useValue: mockEventEmitter },
+        { provide: "EventEmitter2", useValue: mockEventEmitter },
       ],
     }).compile();
 

@@ -23,6 +23,12 @@ describe("WalletService", () => {
     handle: jest.fn(),
   };
 
+  const mockAccountRepository = {
+    findByUserId: jest.fn(),
+  };
+  const mockTransactionRepository = {
+    findMany: jest.fn(),
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -38,6 +44,14 @@ describe("WalletService", () => {
         {
           provide: ReversalStrategy,
           useValue: mockReversalStrategy,
+        },
+        {
+          provide: "IAccountRepository",
+          useValue: mockAccountRepository,
+        },
+        {
+          provide: "ITransactionRepository",
+          useValue: mockTransactionRepository,
         },
       ],
     }).compile();

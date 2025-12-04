@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CreateTransactionDto } from "@modules/wallet/dtos/create-transaction.dto";
 import { DepositStrategy } from "@modules/wallet/strategies/deposit.strategy";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Test, TestingModule } from "@nestjs/testing";
 const mockAccountRepository = {
   findByUserId: jest.fn(),
@@ -18,12 +17,18 @@ describe("DepositStrategy", () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DepositStrategy,
-        { provide: "IAccountRepository", useValue: mockAccountRepository },
+        {
+          provide: "IAccountRepository",
+          useValue: mockAccountRepository,
+        },
         {
           provide: "ITransactionRepository",
           useValue: mockTransactionRepository,
         },
-        { provide: EventEmitter2, useValue: mockEventEmitter },
+        {
+          provide: "EventEmitter2",
+          useValue: mockEventEmitter,
+        },
       ],
     }).compile();
 
