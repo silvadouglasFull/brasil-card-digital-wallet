@@ -32,7 +32,7 @@ Follow these steps to set up the project. You can run it in **Development Mode**
 
 ### 1. Clone the Repository & Install Dependencies
 ```bash
-git clone [https://github.com/silvadouglasFull/brasil-card-digital-wallet.git](https://github.com/silvadouglasFull/brasil-card-digital-wallet.git)
+git clone https://github.com/silvadouglasFull/brasil-card-digital-wallet.git
 cd brasil-card-digital-wallet
 git checkout develop-v1.0
 npm install
