@@ -46,4 +46,4 @@ USER node
 EXPOSE 3000
 
 # Comando para iniciar a aplicação compilada
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main"]

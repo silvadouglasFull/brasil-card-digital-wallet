@@ -1,3 +1,4 @@
+
 # BrasilCard Digital Wallet API
 
 ## 📖 Overview
@@ -27,25 +28,18 @@ The project was built using **Nest.js**, focusing on scalability, security, and 
 
 ## 🚀 Getting Started
 
-Follow these steps to set up the project in your local development environment.
+Follow these steps to set up the project. You can run it in **Development Mode** (Node.js local) or **Production Mode** (Docker).
 
-### 1. Clone the Repository
+### 1. Clone the Repository & Install Dependencies
 ```bash
 git clone git@github-dsweb:silvadouglasFull/brasil-card-digital-wallet.git
 cd brasil-card-digital-wallet
+npm install
 ````
 
-### 2\. Install Dependencies
+### 2\. Environment Configuration
 
-Ensure you have Node.js installed.
-
-```bash
-npm install
-```
-
-### 3\. Environment Configuration
-
-Create a `.env` file in the root directory based on the provided example.
+Create a `.env` file in the root directory.
 
 **`.env` file content:**
 
@@ -54,38 +48,73 @@ DB_USER=brasiluser
 DB_PASS=Lf64uzy2DK
 DB_NAME=brasilcard
 DB_PORT=5432
+# Note: When running migrations from host, use localhost. Inside docker, the app uses 'db' host.
 DATABASE_URL="postgres://brasiluser:Lf64uzy2DK@localhost:5432/brasilcard"
 PORT=3000
 JWT_SECRET=f0PYo5YEqeom3i3XOv8SADNEGmhqkIFpqwlTHhJTQHjdOkN+SPmvG4xsDc5REkvL
 ```
 
-### 4\. Run Docker (Database)
+-----
 
-Start the PostgreSQL container using Docker Compose.
+## 🗄️ Database Setup (Migrations & Seeds)
 
-```bash
-docker-compose up -d
-```
+Regardless of how you run the API (Local or Docker), you must initialize the database schema and populate it with data. The database container must be running (Step 3 below).
 
-*Wait a few seconds for the database to initialize.*
+### Apply Migrations
 
-### 5\. Run Database Migrations
-
-Generate and push the database schema using Drizzle Kit.
+Creates the tables in the PostgreSQL database.
 
 ```bash
-npx drizzle-kit push:pg
+npx drizzle-kit generate && npx drizzle-kit migrate
 ```
 
-### 6\. Start the Application
+### Run Seeders
 
-Run the API in development mode.
+Populates the database with mock users, accounts, and transactions for testing.
+
+  * **Default Password:** `123456`
+  * **Note:** The script outputs a valid email to use for login.
+
+<!-- end list -->
 
 ```bash
-npm run start:dev
+npm run seed
 ```
 
-The server will start at `http://localhost:3000`.
+-----
+
+## ▶️ Execution Options
+
+### Option A: Local Development
+
+Run the API directly on your machine with Hot-Reload.
+
+1.  **Start Database Only:**
+    ```bash
+    docker-compose up -d db
+    ```
+2.  **Run Migrations & Seeds:** (See section above).
+3.  **Start API:**
+    ```bash
+    npm run start:dev
+    ```
+
+### Option B: Running with Docker (Production Build)
+
+Run the entire application (API + Database) in isolated containers using a Multi-Stage Docker build.
+
+1.  **Build and Start Containers:**
+    ```bash
+    docker-compose up -d --build
+    ```
+2.  **Initialize Database:**
+    Since the database port is exposed, you can run migrations from your host machine:
+    ```bash
+    npx drizzle-kit generate
+    npx drizzle-kit migrate
+    npm run seed
+    ```
+3.  **Access:** The API is available at `http://localhost:3000/api/docs`.
 
 -----
 
