@@ -19,6 +19,10 @@ const mockEventEmitter = {
   handleTransactionCreatedEvent: jest.fn().mockResolvedValue(undefined),
 };
 
+const mockUserRepository = {
+  findById: jest.fn(),
+};
+
 describe("TransferStrategy", () => {
   let strategy: TransferStrategy;
 
@@ -33,6 +37,10 @@ describe("TransferStrategy", () => {
         {
           provide: "ITransactionRepository",
           useValue: mockTransactionRepository,
+        },
+        {
+          provide: "IUserRepository",
+          useValue: mockUserRepository,
         },
         { provide: "TransactionAuditListener", useValue: mockEventEmitter },
       ],
@@ -57,8 +65,21 @@ describe("TransferStrategy", () => {
     it("must complete a successful transfer.", async () => {
       const userId = "user-1";
       const dto = createDto(100, "target-account-id");
-      const sourceAccount = { id: "source-id", balance: "500.00" };
-      const targetAccount = { id: "target-account-id", balance: "10.00" };
+
+      const sourceAccount = {
+        id: "source-id",
+        userId: userId,
+        balance: "500.00",
+        accountNumber: "1111",
+      };
+
+      const targetAccount = {
+        id: "target-account-id",
+        userId: "user-2",
+        balance: "10.00",
+        accountNumber: "2222",
+      };
+
       const newTransaction = { id: "tx-new-123" };
 
       mockAccountRepository.findByUserId.mockResolvedValue(sourceAccount);
@@ -66,20 +87,31 @@ describe("TransferStrategy", () => {
         targetAccount,
       );
       mockTransactionRepository.create.mockResolvedValue(newTransaction);
+
+      mockUserRepository.findById.mockImplementation((id) => {
+        if (id === "user-1")
+          return Promise.resolve({ fullName: "Douglas Origem" });
+        if (id === "user-2")
+          return Promise.resolve({ fullName: "Maria Destino" });
+        return Promise.resolve(null);
+      });
+
       const result = await strategy.handle(dto, userId);
       expect(result).toEqual({
         message: "Transferência solicitada. Processando...",
         transactionId: newTransaction.id,
         status: "PROCESSING",
       });
+
       expect(mockTransactionRepository.create).toHaveBeenCalledWith({
         amount: "100",
         type: "TRANSFER",
         status: "PROCESSING",
         fromAccountId: sourceAccount.id,
         toAccountId: targetAccount.id,
-        description: "Transferência entre usuários",
+        description: "Transferência de Douglas Origem para Maria Destino",
       });
+
       expect(
         mockEventEmitter.handleTransactionCreatedEvent,
       ).toHaveBeenCalledWith({
@@ -151,13 +183,19 @@ describe("TransferStrategy", () => {
     });
 
     it("It should throw a generic error if the transaction fails to be created in the database.", async () => {
-      const sourceAccount = { id: "source-id", balance: "500.00" };
-      const targetAccount = { id: "target-id" };
+      const sourceAccount = {
+        id: "source-id",
+        userId: "user-1",
+        balance: "500.00",
+      };
+      const targetAccount = { id: "target-id", userId: "user-2" };
 
       mockAccountRepository.findByUserId.mockResolvedValue(sourceAccount);
       mockAccountRepository.findFirstByAccountId.mockResolvedValue(
         targetAccount,
       );
+
+      mockUserRepository.findById.mockResolvedValue({ fullName: "User Test" });
 
       mockTransactionRepository.create.mockResolvedValue(null);
 

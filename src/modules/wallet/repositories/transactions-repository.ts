@@ -25,7 +25,6 @@ export class TransactionRepository implements ITransactionRepository {
       | "status"
     >,
   ): Promise<TranewTransaction | undefined> {
-    console.log(transactionData);
     const [newTransaction] = await this.db
       .insert(transactions)
       .values({

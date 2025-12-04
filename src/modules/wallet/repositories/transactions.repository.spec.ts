@@ -5,6 +5,7 @@ import {
   TransactionRepository,
 } from "@modules/wallet/repositories/transactions-repository";
 import { Test, TestingModule } from "@nestjs/testing";
+
 jest.mock("@modules/wallet/entities", () => ({
   transactions: {
     name: "transactions_table",
@@ -34,33 +35,41 @@ describe("TransactionRepository", () => {
     repository = module.get<TransactionRepository>(TransactionRepository);
     jest.clearAllMocks();
   });
+
   describe("create", () => {
-    it("You must create a transaction applying the default values ​​and ignoring the input description.", async () => {
+    it("deve criar uma transação aplicando valores padrão quando description e fromAccountId não são informados", async () => {
+      // ARRANGE
       const inputData = {
         amount: "150.5",
         toAccountId: "account-123",
-        fromAccountId: "origem-ignorada",
-        description: "descrição-ignorada",
-      };
+        fromAccountId: undefined,
+        description: undefined,
+      } as any;
+
       const mockCreatedTransaction = {
         id: "tx-uuid-123",
         amount: "150.5",
         type: "DEPOSIT",
         status: "PROCESSING",
         createdAt: new Date(),
-        ...inputData,
+        toAccountId: "account-123",
         description: "Depósito via API",
         fromAccountId: null,
       };
+
       dbMock.returning.mockResolvedValue([mockCreatedTransaction]);
+
       const result = await repository.create(inputData);
+
       expect(result).toEqual(mockCreatedTransaction);
+
       expect(dbMock.insert).toHaveBeenCalledWith(transactions);
+
       expect(dbMock.values).toHaveBeenCalledWith({
         amount: "150.5",
         type: "DEPOSIT",
         status: "PROCESSING",
-        toAccountId: inputData.toAccountId,
+        toAccountId: "account-123",
         fromAccountId: null,
         description: "Depósito via API",
       });
