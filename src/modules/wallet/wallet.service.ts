@@ -7,9 +7,15 @@ import { ITransactionRepository } from "@modules/wallet/repositories/transaction
 import { DepositStrategy } from "@modules/wallet/strategies/deposit.strategy";
 import { ReversalStrategy } from "@modules/wallet/strategies/reversal.strategy";
 import { TransferStrategy } from "@modules/wallet/strategies/transfer.strategy";
-import { BadRequestException, Inject, Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  Logger,
+} from "@nestjs/common";
 @Injectable()
 export class WalletService {
+  private readonly logger = new Logger(WalletService.name);
   constructor(
     private depositStrategy: DepositStrategy,
     private transferStrategy: TransferStrategy,
@@ -20,6 +26,7 @@ export class WalletService {
   ) {}
 
   async processTransaction(dto: CreateTransactionDto, userId: string) {
+    this.logger.log(`Iniciando transação... ${JSON.stringify(dto)}`);
     switch (dto.type) {
       case TransactionType.DEPOSIT:
         return this.depositStrategy.handle(dto, userId);
