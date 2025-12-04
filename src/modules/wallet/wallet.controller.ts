@@ -32,4 +32,10 @@ export class WalletController {
   async getStatement(@Req() req: { user: { id: string } }) {
     return this.walletService.getStatement(req.user.id);
   }
+  @UseGuards(JwtAuthGuard)
+  @Get("history")
+  @ApiOperation({ summary: "Obter extrato de todas as transações" })
+  async getHistory(@Req() req: { user: { id: string } }) {
+    return this.walletService.getHistory(req.user.id);
+  }
 }

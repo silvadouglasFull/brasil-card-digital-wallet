@@ -1,6 +1,6 @@
 import {
-    CreateTransactionDto,
-    TransactionType,
+  CreateTransactionDto,
+  TransactionType,
 } from "@modules/wallet/dtos/create-transaction.dto";
 import { WalletController } from "@modules/wallet/wallet.controller";
 import { WalletService } from "@modules/wallet/wallet.service";

@@ -1,3 +1,4 @@
+import { IUserRepository } from "@/modules/users/repositories/user.repository.interface";
 import { CreateTransactionDto } from "@modules/wallet/dtos/create-transaction.dto";
 import { TransactionAuditListener } from "@modules/wallet/listeners/transaction-audit.listener";
 import { IAccountRepository } from "@modules/wallet/repositories/account-repository.interface";
@@ -13,10 +14,16 @@ export class TransferStrategy implements ITransactionStrategy {
     @Inject("IAccountRepository") private accountRepository: IAccountRepository,
     @Inject("ITransactionRepository")
     private transactionRepository: ITransactionRepository,
+    @Inject("IUserRepository")
+    private userRepository: IUserRepository,
     @Inject("TransactionAuditListener")
     private eventEmitter: TransactionAuditListener,
   ) {}
-
+  private async getUserName(userId: string): Promise<string> {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new BadRequestException("Usuário não encontrado");
+    return user.fullName;
+  }
   async handle(dto: CreateTransactionDto, userId: string) {
     if (!dto.toAccountId) {
       throw new BadRequestException(
@@ -44,6 +51,8 @@ export class TransferStrategy implements ITransactionStrategy {
         "Não é possível transferir para a mesma conta.",
       );
     }
+    const sourceUserName = await this.getUserName(userId);
+    const targetUserName = await this.getUserName(targetAccount.userId);
 
     const newTransaction = await this.transactionRepository.create({
       amount: dto.amount.toString(),
@@ -51,7 +60,7 @@ export class TransferStrategy implements ITransactionStrategy {
       status: this.defaultStatus,
       fromAccountId: sourceAccount.id,
       toAccountId: targetAccount.id,
-      description: "Transferência entre usuários",
+      description: `Transferência de ${sourceUserName ?? sourceAccount.accountNumber} para ${targetUserName ?? targetAccount.accountNumber}`,
     });
     if (!newTransaction) throw new Error("Transaction not created");
     await this.eventEmitter.handleTransactionCreatedEvent({

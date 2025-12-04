@@ -25,6 +25,7 @@ export class TransactionRepository implements ITransactionRepository {
       | "status"
     >,
   ): Promise<TranewTransaction | undefined> {
+    console.log(transactionData);
     const [newTransaction] = await this.db
       .insert(transactions)
       .values({
@@ -32,8 +33,8 @@ export class TransactionRepository implements ITransactionRepository {
         type: transactionData.type || this.defaultType,
         status: transactionData.status || this.defaultStatus,
         toAccountId: transactionData.toAccountId,
-        fromAccountId: null,
-        description: "Depósito via API",
+        fromAccountId: transactionData.fromAccountId || null,
+        description: transactionData.description || "Depósito via API",
       })
       .returning();
     return newTransaction;
@@ -52,6 +53,16 @@ export class TransactionRepository implements ITransactionRepository {
       )
       .orderBy(desc(transactions.createdAt))
       .limit(20);
+    return result;
+  }
+  public async findHistoryByAccountId(
+    accountId: string,
+  ): Promise<TranewTransaction[] | undefined> {
+    const result = await this.db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.fromAccountId, accountId))
+      .orderBy(desc(transactions.createdAt));
     return result;
   }
 }

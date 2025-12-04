@@ -2,12 +2,12 @@ import {
   CreateTransactionDto,
   TransactionType,
 } from "@modules/wallet/dtos/create-transaction.dto";
+import { IAccountRepository } from "@modules/wallet/repositories/account-repository.interface";
+import { ITransactionRepository } from "@modules/wallet/repositories/transactions-repository.interface";
 import { DepositStrategy } from "@modules/wallet/strategies/deposit.strategy";
 import { ReversalStrategy } from "@modules/wallet/strategies/reversal.strategy";
 import { TransferStrategy } from "@modules/wallet/strategies/transfer.strategy";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { IAccountRepository } from "./repositories/account-repository.interface";
-import { ITransactionRepository } from "./repositories/transactions-repository.interface";
 @Injectable()
 export class WalletService {
   constructor(
@@ -42,7 +42,16 @@ export class WalletService {
   async getStatement(userId: string) {
     const account = await this.getBalance(userId);
     if (!account) throw new BadRequestException("Conta não encontrada");
-    const history = await this.transactionRepository.findMany(account.id);
+    const statement = await this.transactionRepository.findMany(account.id);
+    if (!statement) throw new BadRequestException("Histórico não encontrado");
+    return statement;
+  }
+  async getHistory(userId: string) {
+    const account = await this.getBalance(userId);
+    if (!account) throw new BadRequestException("Conta não encontrada");
+    const history = await this.transactionRepository.findHistoryByAccountId(
+      account.id,
+    );
     if (!history) throw new BadRequestException("Histórico não encontrado");
     return history;
   }

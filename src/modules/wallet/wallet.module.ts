@@ -1,4 +1,5 @@
 import { DatabaseModule } from "@/core/database/database.module";
+import { UserRepository } from "@modules/users/repositories/user.repository";
 import { TransactionAuditListener } from "@modules/wallet/listeners/transaction-audit.listener";
 import { AccountRepository } from "@modules/wallet/repositories/account-repository";
 import { TransactionRepository } from "@modules/wallet/repositories/transactions-repository";
@@ -23,6 +24,10 @@ import { Module } from "@nestjs/common";
     {
       provide: "ITransactionRepository",
       useClass: TransactionRepository,
+    },
+    {
+      provide: "IUserRepository",
+      useClass: UserRepository,
     },
     {
       provide: "TransactionAuditListener",
