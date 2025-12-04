@@ -8,16 +8,14 @@ import { TransferStrategy } from "@modules/wallet/strategies/transfer.strategy";
 import { WalletController } from "@modules/wallet/wallet.controller";
 import { WalletService } from "@modules/wallet/wallet.service";
 import { Module } from "@nestjs/common";
-import { EventEmitter2, EventEmitterModule } from "@nestjs/event-emitter";
 @Module({
-  imports: [DatabaseModule, EventEmitterModule],
+  imports: [DatabaseModule],
   controllers: [WalletController],
   providers: [
     WalletService,
     DepositStrategy,
     TransferStrategy,
     ReversalStrategy,
-    TransactionAuditListener,
     {
       provide: "IAccountRepository",
       useClass: AccountRepository,
@@ -27,8 +25,8 @@ import { EventEmitter2, EventEmitterModule } from "@nestjs/event-emitter";
       useClass: TransactionRepository,
     },
     {
-      provide: "EventEmitter2",
-      useClass: EventEmitter2,
+      provide: "TransactionAuditListener",
+      useClass: TransactionAuditListener,
     },
   ],
 })

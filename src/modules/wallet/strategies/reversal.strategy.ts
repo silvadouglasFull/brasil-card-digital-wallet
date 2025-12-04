@@ -1,9 +1,9 @@
 import { CreateTransactionDto } from "@modules/wallet/dtos/create-transaction.dto";
+import { TransactionAuditListener } from "@modules/wallet/listeners/transaction-audit.listener";
 import { IAccountRepository } from "@modules/wallet/repositories/account-repository.interface";
 import { ITransactionRepository } from "@modules/wallet/repositories/transactions-repository.interface";
 import { ITransactionStrategy } from "@modules/wallet/strategies/transaction.strategy.interface";
 import { BadRequestException, Inject, Injectable } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
 export class ReversalStrategy implements ITransactionStrategy {
@@ -13,8 +13,8 @@ export class ReversalStrategy implements ITransactionStrategy {
     @Inject("IAccountRepository") private accountRepository: IAccountRepository,
     @Inject("ITransactionRepository")
     private transactionRepository: ITransactionRepository,
-    @Inject("EventEmitter2")
-    private eventEmitter: EventEmitter2,
+    @Inject("TransactionAuditListener")
+    private eventEmitter: TransactionAuditListener,
   ) {}
 
   async handle(dto: CreateTransactionDto, userId: string) {
@@ -42,12 +42,12 @@ export class ReversalStrategy implements ITransactionStrategy {
       description: "Reversão administrativa/Solicitada",
     });
     if (!newTransaction) throw new Error("Transaction not created");
-    this.eventEmitter.emit("transaction.created", {
+    await this.eventEmitter.handleTransactionCreatedEvent({
       transactionId: newTransaction.id,
       amount: dto.amount.toString(),
       accountId: sourceAccount.id,
       toAccountId: targetAccount.id,
-      type: this.defaultType,
+      type: "REVERSAL",
     });
 
     return {

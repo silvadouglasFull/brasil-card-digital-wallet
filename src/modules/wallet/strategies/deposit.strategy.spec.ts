@@ -9,7 +9,7 @@ const mockTransactionRepository = {
   create: jest.fn(),
 };
 const mockEventEmitter = {
-  emit: jest.fn(),
+  handleTransactionCreatedEvent: jest.fn().mockResolvedValue(undefined),
 };
 describe("DepositStrategy", () => {
   let strategy: DepositStrategy;
@@ -26,7 +26,7 @@ describe("DepositStrategy", () => {
           useValue: mockTransactionRepository,
         },
         {
-          provide: "EventEmitter2",
+          provide: "TransactionAuditListener",
           useValue: mockEventEmitter,
         },
       ],
@@ -60,12 +60,14 @@ describe("DepositStrategy", () => {
       description: "Depósito via API",
     });
 
-    expect(mockEventEmitter.emit).toHaveBeenCalledWith("transaction.created", {
-      transactionId: mockTransaction.id,
-      accountId: mockAccount.id,
-      amount: dto.amount,
-      type: "DEPOSIT",
-    });
+    expect(mockEventEmitter.handleTransactionCreatedEvent).toHaveBeenCalledWith(
+      {
+        transactionId: mockTransaction.id,
+        accountId: mockAccount.id,
+        amount: dto.amount,
+        type: "DEPOSIT",
+      },
+    );
 
     expect(result).toEqual({
       message: "Depósito solicitado. Aguardando confirmação da auditoria.",
@@ -81,7 +83,9 @@ describe("DepositStrategy", () => {
       "Account not found",
     );
     expect(mockTransactionRepository.create).not.toHaveBeenCalled();
-    expect(mockEventEmitter.emit).not.toHaveBeenCalled();
+    expect(
+      mockEventEmitter.handleTransactionCreatedEvent,
+    ).not.toHaveBeenCalled();
   });
 
   it("It should throw an error if the transaction creation fails.", async () => {
@@ -92,6 +96,8 @@ describe("DepositStrategy", () => {
     await expect(strategy.handle(dto, "user-123")).rejects.toThrow(
       "Transaction not created",
     );
-    expect(mockEventEmitter.emit).not.toHaveBeenCalled();
+    expect(
+      mockEventEmitter.handleTransactionCreatedEvent,
+    ).not.toHaveBeenCalled();
   });
 });

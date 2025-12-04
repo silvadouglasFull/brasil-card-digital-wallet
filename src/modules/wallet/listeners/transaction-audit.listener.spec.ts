@@ -59,18 +59,6 @@ describe("TransactionAuditListener", () => {
     expect(mockTx.execute).toHaveBeenCalled();
   });
 
-  it("It should not process transactions that are not DEPOSIT.", async () => {
-    const payload: PayloadDto = {
-      transactionId: "tx_456",
-      amount: "50.00",
-      accountId: "acc_456",
-      type: "TRANSFER",
-    };
-    const promise = listener.handleTransactionCreatedEvent(payload);
-    jest.advanceTimersByTime(2000);
-    await promise;
-    expect(mockDb.transaction).not.toHaveBeenCalled();
-  });
   it("It must process reversals and allow negative balances.", async () => {
     const payload: PayloadDto = {
       transactionId: "tx_rev_1",

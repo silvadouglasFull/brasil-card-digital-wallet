@@ -25,10 +25,11 @@ export class TransactionAuditListener {
         );
       });
       console.log(`[AUDITORIA] Transação ${payload.transactionId} APROVADA.`);
+    } else if (payload.type === "TRANSFER") {
+      console.log(payload);
+      await this.processTransfer(payload);
     } else if (payload.type === "REVERSAL") {
       await this.processReversal(payload);
-    } else if (payload.type === "TRANSFER") {
-      await this.processTransfer(payload);
     }
   }
   public async processTransfer(payload: PayloadDto) {

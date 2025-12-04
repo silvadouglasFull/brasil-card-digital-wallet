@@ -16,7 +16,7 @@ const mockTransactionRepository = {
 };
 
 const mockEventEmitter = {
-  emit: jest.fn(),
+  handleTransactionCreatedEvent: jest.fn().mockResolvedValue(undefined),
 };
 
 describe("TransferStrategy", () => {
@@ -34,7 +34,7 @@ describe("TransferStrategy", () => {
           provide: "ITransactionRepository",
           useValue: mockTransactionRepository,
         },
-        { provide: "EventEmitter2", useValue: mockEventEmitter },
+        { provide: "TransactionAuditListener", useValue: mockEventEmitter },
       ],
     }).compile();
 
@@ -80,16 +80,15 @@ describe("TransferStrategy", () => {
         toAccountId: targetAccount.id,
         description: "Transferência entre usuários",
       });
-      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        "transaction.created",
-        {
-          transactionId: newTransaction.id,
-          amount: "100",
-          accountId: sourceAccount.id,
-          toAccountId: targetAccount.id,
-          type: "TRANSFER",
-        },
-      );
+      expect(
+        mockEventEmitter.handleTransactionCreatedEvent,
+      ).toHaveBeenCalledWith({
+        transactionId: newTransaction.id,
+        amount: "100",
+        accountId: sourceAccount.id,
+        toAccountId: targetAccount.id,
+        type: "TRANSFER",
+      });
     });
 
     it("It should throw an error if toAccountId is not provided.", async () => {

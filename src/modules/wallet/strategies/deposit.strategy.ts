@@ -1,19 +1,18 @@
 import { CreateTransactionDto } from "@modules/wallet/dtos/create-transaction.dto";
+import { TransactionAuditListener } from "@modules/wallet/listeners/transaction-audit.listener";
 import type { IAccountRepository } from "@modules/wallet/repositories/account-repository.interface";
 import { ITransactionRepository } from "@modules/wallet/repositories/transactions-repository.interface";
 import { ITransactionStrategy } from "@modules/wallet/strategies/transaction.strategy.interface";
 import { Inject, Injectable } from "@nestjs/common";
-import { EventEmitter2 } from "@nestjs/event-emitter";
 @Injectable()
 export class DepositStrategy implements ITransactionStrategy {
   private defaultStatus: string = "PROCESSING";
-  private defaultType: string = "DEPOSIT";
   constructor(
     @Inject("IAccountRepository") private accountRepository: IAccountRepository,
     @Inject("ITransactionRepository")
     private transactionRepository: ITransactionRepository,
-    @Inject("EventEmitter2")
-    private eventEmitter: EventEmitter2,
+    @Inject("TransactionAuditListener")
+    private eventEmitter: TransactionAuditListener,
   ) {}
 
   async handle(dto: CreateTransactionDto, userId: string) {
@@ -26,11 +25,11 @@ export class DepositStrategy implements ITransactionStrategy {
       description: "Depósito via API",
     });
     if (!newTransaction) throw new Error("Transaction not created");
-    this.eventEmitter.emit("transaction.created", {
+    await this.eventEmitter.handleTransactionCreatedEvent({
       transactionId: newTransaction.id,
       accountId: account.id,
-      amount: dto.amount,
-      type: this.defaultType,
+      amount: dto.amount.toString(),
+      type: "DEPOSIT",
     });
     return {
       message: "Depósito solicitado. Aguardando confirmação da auditoria.",
