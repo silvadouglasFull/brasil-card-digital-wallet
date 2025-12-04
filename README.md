@@ -1,9 +1,8 @@
-
 # BrasilCard Digital Wallet API
 
 ## 📖 Overview
 
-This is a robust RESTful API developed for a digital financial wallet system. Ideally designed for the **BrasilCard** financial institution, this application allows users to register, authenticate, and manage their finances in real-time.
+This is a robust RESTful API developed for a digital financial wallet system. Ideally designed for the **BrasilCard** financial institution, this application allows users to register, authenticate, and manage their finances.
 
 The project was built using **Nest.js**, focusing on scalability, security, and maintainability. It implements advanced software engineering concepts such as:
 
@@ -23,6 +22,7 @@ The project was built using **Nest.js**, focusing on scalability, security, and 
 * **Containerization:** Docker & Docker Compose
 * **Documentation:** Swagger / OpenAPI
 * **Testing:** Jest
+* **Logging:** Winston (File Rotation)
 
 ---
 
@@ -32,7 +32,7 @@ Follow these steps to set up the project. You can run it in **Development Mode**
 
 ### 1. Clone the Repository & Install Dependencies
 ```bash
-git clone https://github.com/silvadouglasFull/brasil-card-digital-wallet.git
+git clone [https://github.com/silvadouglasFull/brasil-card-digital-wallet.git](https://github.com/silvadouglasFull/brasil-card-digital-wallet.git)
 cd brasil-card-digital-wallet
 git checkout develop-v1.0
 npm install
@@ -119,6 +119,17 @@ Run the entire application (API + Database) in isolated containers using a Multi
 
 -----
 
+## 📝 Observability & Logging
+
+The application uses **Winston** for structured logging with file rotation support. Logs are automatically managed to ensure traceability without consuming excessive disk space.
+
+  * **Log Location:** `/logs` directory in the project root (or inside the container).
+  * **Error Logs:** `logs/errors/%DATE%-error.log` (Contains only error level logs).
+  * **Combined Logs:** `logs/combined/%DATE%-combined.log` (Contains info, warning, and error logs).
+  * **Retention Policy:** Logs are rotated daily and kept for **14 days** before being automatically deleted.
+
+-----
+
 ## 📚 API Documentation
 
 The API includes auto-generated Swagger documentation. Once the server is running, visit:
@@ -131,8 +142,8 @@ The API includes auto-generated Swagger documentation. Once the server is runnin
 | :--- | :--- | :--- | :--- |
 | **Auth** | `POST` | `/auth/login` | Authenticates user and sets HttpOnly Cookie. |
 | **Users** | `POST` | `/users` | Registers a new user (creates account auto). |
-| **Wallet** | `GET` | `/wallet/balance` | **[NEW]** Retrieves current user balance and account info. |
-| **Wallet** | `GET` | `/wallet/statement` | **[NEW]** Retrieves transaction history (statement). |
+| **Wallet** | `GET` | `/wallet/balance` | Retrieves current user balance and account info. |
+| **Wallet** | `GET` | `/wallet/statement` | Retrieves transaction history (statement). |
 | **Wallet** | `POST` | `/wallet/transaction` | Creates a transaction (Deposit/Transfer/Reversal). |
 
 -----
