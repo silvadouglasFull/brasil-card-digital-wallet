@@ -30,7 +30,6 @@ export class AuthController {
       sameSite: "strict",
       maxAge: 3600 * 1000,
     });
-
     return res.status(HttpStatus.OK).json({
       message: "Login realizado com sucesso",
       user,
