@@ -84,9 +84,7 @@ npm run seed
 
 -----
 
-## ▶️ Execution Options
-
-### Option A: Local Development
+## Local Development
 
 Run the API directly on your machine with Hot-Reload.
 
@@ -99,24 +97,6 @@ Run the API directly on your machine with Hot-Reload.
     ```bash
     npm run start:dev
     ```
-
-### Option B: Running with Docker (Production Build)
-
-Run the entire application (API + Database) in isolated containers using a Multi-Stage Docker build.
-
-1.  **Build and Start Containers:**
-    ```bash
-    docker-compose up -d --build
-    ```
-2.  **Initialize Database:**
-    Since the database port is exposed, you can run migrations from your host machine:
-    ```bash
-    npx drizzle-kit generate
-    npx drizzle-kit migrate
-    npm run seed
-    ```
-3.  **Access:** The API is available at `http://localhost:3000/api/docs`.
-
 -----
 
 ## 📝 Observability & Logging
