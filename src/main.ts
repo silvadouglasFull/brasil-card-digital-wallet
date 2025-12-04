@@ -3,6 +3,7 @@ import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
 import { AppModule } from "./app.module";
+import { customOptions } from "./swagger/config";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -27,11 +28,12 @@ async function bootstrap() {
     .addTag("Auth", "Autenticação e Gestão de Acesso")
     .addTag("Wallet", "Operações Financeiras (Depósitos, Transferências)")
     .addBearerAuth()
+    .addCookieAuth("access_token")
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   console.log("To see docs visit http://localhost:3000/api/docs");
-  SwaggerModule.setup("api/docs", app, document);
+  SwaggerModule.setup("api/docs", app, document, customOptions);
 
   await app.listen(3000);
 }
