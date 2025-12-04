@@ -45,14 +45,14 @@ Create a `.env` file in the root directory.
 **`.env` file content:**
 
 ```env
-DB_USER=brasiluser
-DB_PASS=Lf64uzy2DK
-DB_NAME=brasilcard
-DB_PORT=5432
+DB_USER=
+DB_PASS=
+DB_NAME=
+DB_PORT=
 # Note: When running migrations from host, use localhost. Inside docker, the app uses 'db' host.
-DATABASE_URL="postgres://brasiluser:Lf64uzy2DK@localhost:5432/brasilcard"
+DATABASE_URL=""
 PORT=3000
-JWT_SECRET=f0PYo5YEqeom3i3XOv8SADNEGmhqkIFpqwlTHhJTQHjdOkN+SPmvG4xsDc5REkvL
+JWT_SECRET=
 ```
 
 -----
